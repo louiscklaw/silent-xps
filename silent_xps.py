@@ -53,7 +53,7 @@ def get_info():
 
     next = None
     for l in sensors_out:
-        #print(l)
+        # print(l)
         if l.startswith("Core"):
             temp=parse_line(l)
             temp_info["cpu"].append(temp)
@@ -64,7 +64,11 @@ def get_info():
                 if next not in temp_info:
                     temp_info[next]=[]
                 temp_info[next].append(parse_line(l))
-        elif l.endswith("RPM"):
+
+        # on fedora:
+        # fan1:        2501 RPM  (min =    0 RPM, max = 4900 RPM)
+        # fan2:        2490 RPM  (min =    0 RPM, max = 4900 RPM)
+        elif l.startswith("fan"):
             fan_info.append(parse_line(l,"R"))
         elif not l:
             next = None
@@ -134,6 +138,7 @@ if os.geteuid() != 0:
 
 while True:
     temp_info, fan_info = get_info()
+
     max_temp = get_max(temp_info)
     max_fan = max(fan_info)
     if max_fan > 0:
